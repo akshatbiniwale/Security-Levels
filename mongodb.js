@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
-mongoose.connect("mongodb://127.0.0.1/authDB")
+mongoose.connect("mongodb://127.0.0.1/authDB", {useNewUrlParser: true})
     .then(() => {
         console.log("MongoDb connected");
     })
@@ -9,17 +10,18 @@ mongoose.connect("mongodb://127.0.0.1/authDB")
         console.log("MongoDb failed to connect: ", error);
     });
 
-const registerSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    } 
+const userSchema = new mongoose.Schema({
+    username: String,
+    password: String
 });
 
-const register = new mongoose.model("users", registerSchema);
+userSchema.plugin(passportLocalMongoose);
 
-module.exports = register
+const User = new mongoose.model("User", userSchema);
+
+passport.use(User.createStrategy());
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+module.exports = User;

@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const encrypt = require("mongoose-encryption");
-require("dotevn").config();
 
 mongoose.connect("mongodb://127.0.0.1/authDB")
     .then(() => {
@@ -19,11 +18,6 @@ const registerSchema = new mongoose.Schema({
         type: String,
         required: true
     } 
-});
-
-registerSchema.plugin(encrypt, {
-    secret: process.env.SECRET, 
-    encryptedFields: ["password"]
 });
 
 const register = new mongoose.model("users", registerSchema);

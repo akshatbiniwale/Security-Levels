@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const signIn = require("./mongodb");
+const md5 = require("md5");
 
 const app = express();
 
@@ -19,7 +20,7 @@ app.route("/login")
     })
     .post(async (req, res)=> {
         const email = req.body.username;
-        const password = req.body.password;
+        const password = md5(req.body.password);
         await signIn.findOne({email: email})
             .then((userFound)=> {
                 if(userFound.password === password){
@@ -40,7 +41,7 @@ app.route("/register")
     .post(async (req, res)=> {
         const userData = new signIn({
             email: req.body.username,
-            password: req.body.password
+            password: md5(req.body.password)
         });
         userData.save()
             .then(()=> {

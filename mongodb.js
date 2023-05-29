@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const encrypt = require("mongoose-encryption"); 
+const encrypt = require("mongoose-encryption");
+require("dotevn").config();
 
 mongoose.connect("mongodb://127.0.0.1/authDB")
     .then(() => {
@@ -20,9 +21,8 @@ const registerSchema = new mongoose.Schema({
     } 
 });
 
-const secret = "ElectricCarsAreShit.";
 registerSchema.plugin(encrypt, {
-    secret: secret, 
+    secret: process.env.SECRET, 
     encryptedFields: ["password"]
 });
 

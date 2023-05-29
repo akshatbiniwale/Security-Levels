@@ -20,11 +20,11 @@ const registerSchema = new mongoose.Schema({
     } 
 });
 
-// const secret = "ElectricCarsAreShit.";
-// registerSchema.plugin(encrypt, {
-//     secret: secret, 
-//     encryptedFields: ["password"]
-// });
+const secret = "ElectricCarsAreShit.";
+registerSchema.plugin(encrypt, {
+    secret: secret, 
+    encryptedFields: ["password"]
+});
 
 const register = new mongoose.model("users", registerSchema);
 

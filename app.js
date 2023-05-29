@@ -38,11 +38,11 @@ app.route("/register")
         res.render("register");
     })
     .post(async (req, res)=> {
-        const userData = {
+        const userData = new signIn({
             email: req.body.username,
             password: req.body.password
-        };
-        await signIn.insertMany([userData])
+        });
+        userData.save()
             .then(()=> {
                 res.render("secrets");
             })

@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GitHubStrategy = require('passport-github').Strategy;
 const findOrCreate = require("mongoose-findorcreate");
 
 mongoose.connect("mongodb://127.0.0.1/authDB", {useNewUrlParser: true})
@@ -14,9 +15,9 @@ mongoose.connect("mongodb://127.0.0.1/authDB", {useNewUrlParser: true})
     });
 
 const userSchema = new mongoose.Schema({
-    username: String,
     password: String,
-    googleId: String
+    googleId: String,
+    githubId: String
 });
 
 userSchema.plugin(passportLocalMongoose);
@@ -42,6 +43,18 @@ passport.use(new GoogleStrategy({
 },
     function (accessToken, refreshToken, profile, cb) {
         User.findOrCreate({ googleId: profile.id }, function (err, user) {
+            return cb(err, user);
+        });
+    }
+));
+
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/github/secrets"
+},
+    function (accessToken, refreshToken, profile, cb) {
+        User.findOrCreate({ githubId: profile.id }, function (err, user) {
             return cb(err, user);
         });
     }

@@ -36,6 +36,15 @@ app.get("/auth/google/secrets",
         res.redirect('/secrets');
     });
 
+app.get("/auth/github",
+    passport.authenticate('github'));
+
+app.get("/auth/github/secrets",
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/secrets');
+    });
+
 app.route("/login")
     .get((req, res)=> {
         res.render("login");

@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -25,6 +24,17 @@ app.use(passport.session());
 app.get("/", (req, res)=> {
     res.render("home");
 });
+
+app.route('/auth/google')
+    .get(passport.authenticate('google', {
+        scope: ['profile']
+    }));
+
+app.get("/auth/google/secrets",
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        res.redirect('/secrets');
+    });
 
 app.route("/login")
     .get((req, res)=> {

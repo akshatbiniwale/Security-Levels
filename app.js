@@ -65,12 +65,9 @@ app.route("/login")
         });
     });
 
-app.get("/secrets", (req, res)=> {
-    if(req.isAuthenticated()){
-        res.render("secrets");
-    }else{
-        res.redirect("/login");
-    }
+app.get("/secrets", async (req, res)=> {
+    const foundUsers = await User.find({secret: {$ne: null}});
+    res.render("secrets", {usersSecrets: foundUsers});
 });
 
 app.route("/register")
@@ -93,6 +90,25 @@ app.route("/register")
 app.get("/logout", (req, res)=> {
     res.render("home");
 });
+
+app.route("/submit")
+    .get((req, res)=> {
+        if(req.isAuthenticated()){
+            res.render("submit");
+        }else{
+            res.redirect("/login");
+        }
+    })
+    .post(async (req, res)=> {
+        const submittedSecret = req.body.secret;
+        await User.findOneAndUpdate({_id: req.user._id}, {secret: submittedSecret})
+            .then(()=> {
+                res.redirect("/secrets");
+            })
+            .catch((err)=> {
+                console.log(err);
+            });
+    });
 
 app.listen(3000, function(req, res){
     console.log("The server is live on port 3000");

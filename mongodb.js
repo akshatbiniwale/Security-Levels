@@ -17,7 +17,8 @@ mongoose.connect("mongodb://127.0.0.1/authDB", {useNewUrlParser: true})
 const userSchema = new mongoose.Schema({
     password: String,
     googleId: String,
-    githubId: String
+    githubId: String,
+    secret: String
 });
 
 userSchema.plugin(passportLocalMongoose);
